@@ -1,12 +1,23 @@
 # Avalonia macOS 应用打包指南
 
-本指南详细介绍如何将 Avalonia 应用程序打包为 macOS 原生应用（.app）和 DMG 安装包。
+本指南详细介绍如何将 Avalonia 应用程序打包为 macOS 原生应用（.app）、DMG 安装包和 PKG 安装包。
+
+## 📦 打包格式
+
+本指南支持三种 macOS 应用打包格式：
+
+| 格式 | 适用场景 | 特点 |
+|------|----------|------|
+| **[.app 包](#构建步骤)** | 开发调试 | 原生应用格式，可直接运行 |
+| **[DMG 安装包](#创建-dmg-安装包)** | 用户分发 | 磁盘镜像，拖拽安装体验 |
+| **[PKG 安装包](PKG-GUIDE.md)** | 企业分发 | 标准安装包，一键安装到 Applications |
 
 ## 目录
 
 - [前置要求](#前置要求)
 - [项目结构](#项目结构)
 - [构建步骤](#构建步骤)
+- [PKG 打包指南](#pkg-打包指南)
 - [自动化脚本](#自动化脚本)
 - [GitHub Actions 自动化](#github-actions-自动化)
 - [故障排除](#故障排除)
@@ -297,6 +308,61 @@ chmod +x build-macos.sh
 # 运行构建
 ./build-macos.sh
 ```
+
+## PKG 打包指南
+
+### 🚀 快速开始 PKG 打包
+
+除了 DMG 格式，我们还提供了 **PKG 打包方案**，这是 macOS 的标准安装包格式，适合企业分发和自动化部署。
+
+#### 主要优势
+
+- ✅ **一键安装**: 双击即可自动安装到 `/Applications` 目录
+- ✅ **MAUI 体验**: 提供类似 MAUI 的一键打包流程
+- ✅ **企业友好**: 支持命令行安装和卸载
+- ✅ **标准格式**: macOS 原生支持的安装包格式
+
+#### 快速使用
+
+1. **下载 PKG 打包脚本**：
+   ```bash
+   curl -O https://raw.githubusercontent.com/interface95/avalonia-macos-build-guide/main/build-pkg.sh
+   chmod +x build-pkg.sh
+   ```
+
+2. **配置项目**（在 Desktop 项目的 `.csproj` 中添加）：
+   ```xml
+   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-arm64' OR '$(RuntimeIdentifier)' == 'osx-x64'">
+       <CreatePackage>true</CreatePackage>
+       <PackageId>com.yourcompany.yourapp</PackageId>
+       <Title>YourAppName</Title>
+       <PackageVersion>1.0.0</PackageVersion>
+   </PropertyGroup>
+   ```
+
+3. **一键打包**：
+   ```bash
+   ./build-pkg.sh
+   ```
+
+4. **安装测试**：
+   ```bash
+   sudo installer -pkg YourApp.pkg -target /
+   ```
+
+#### 详细文档
+
+完整的 PKG 打包配置和高级功能请参考：
+
+📖 **[PKG 打包详细指南](PKG-GUIDE.md)**
+
+该文档包含：
+- 详细的步骤说明
+- 项目配置示例
+- GitHub Actions 自动化
+- 故障排除和调试技巧
+- 生产环境代码签名
+- 多架构支持
 
 ## GitHub Actions 自动化
 
